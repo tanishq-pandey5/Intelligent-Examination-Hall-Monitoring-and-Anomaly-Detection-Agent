@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment and IDE
+.env
+.venv
+env/
+venv/
+ENV/
+.idea/
+.vscode/
+.streamlit/credentials.toml
+*.swp
+*.swo
+.DS_Store
+
+# Large datasets & raw video files (GitHub limits)
+videos/
+data/dataset/
+data/evidence/
+data/sample_videos/
+outputs/video_inspection/
+
+# SQLite databases & runtime outputs
+*.db
+*.sqlite3
+data/*.db
+runs/
+*.log
+
+# Pretrained generic weights (downloaded automatically if missing)
+yolov8n.pt
+models/yolov8n.pt
+
+# Keep fine-tuned models
+!models/yolov8n_exam.pt
+!models/behavior_anomaly_detector.joblib
+!models/training_meta.json

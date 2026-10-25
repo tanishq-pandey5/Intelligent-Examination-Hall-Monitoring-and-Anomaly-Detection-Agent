@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamGuard AI - Intelligent Examination Hall Monitoring</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- Chart.js for silky smooth 60fps canvas charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Outer Glassmorphic Shell Window -->
+  <div class="app-shell">
+
+    <!-- 1. LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-container">
+          <div class="brand-logo-icon">⌘</div>
+          <div class="brand-title">ExamGuard AI</div>
+        </div>
+
+        <nav class="nav-menu">
+          <div class="nav-item active" onclick="switchMainTab('dashboard')">
+            <span class="nav-icon">◫</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" onclick="openVideoModal()">
+            <span class="nav-icon">📹</span>
+            <span>Live Video</span>
+          </div>
+          <div class="nav-item" onclick="switchMainTab('grid')">
+            <span class="nav-icon">🗺️</span>
+            <span>Seating Grid</span>
+          </div>
+          <div class="nav-item" onclick="switchMainTab('alerts')">
+            <span class="nav-icon">🚨</span>
+            <span>Anomaly Feed</span>
+          </div>
+          <div class="nav-item" onclick="switchMainTab('evidence')">
+            <span class="nav-icon">📸</span>
+            <span>Evidence Vault</span>
+          </div>
+          <div class="nav-item" onclick="switchMainTab('models')">
+            <span class="nav-icon">🧠</span>
+            <span>Model Lab</span>
+          </div>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="nav-item" onclick="openSettingsModal()">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+        <div class="nav-item" onclick="showSupportInfo()">
+          <span class="nav-icon">🎧</span>
+          <span>Support</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN DASHBOARD CONTENT -->
+    <main class="main-content">
+
+      <!-- Top Header -->
+      <header class="top-header">
+        <div>
+          <h1 class="welcome-title">Welcome, <span class="gradient-name">Admin</span></h1>
+          <p class="welcome-subtitle">Here's your examination hall monitoring overview</p>
+        </div>
+
+        <div class="header-right">
+          <button class="header-btn" title="System Notifications" onclick="showNotificationToast()">
+            🔔
+            <div class="notification-dot"></div>
+          </button>
+          <button class="header-btn" title="Model Preferences" onclick="openSettingsModal()">
+            ⚙️
+          </button>
+          
+          <div class="profile-chip" title="Active Proctor Profile">
+            <img class="profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Admin">
+            <div class="profile-text">
+              <span class="profile-name">Admin</span>
+              <span class="profile-email">admin@hall.edu</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sub-Bar: Pill Tabs & AI Search -->
+      <section class="sub-bar">
+        <div class="pill-group">
+          <button class="pill-tab active" id="tab-btn-overview" onclick="switchSubPill('overview')">Live Monitor</button>
+          <button class="pill-tab" id="tab-btn-seating" onclick="openVideoModal()">Video Canvas</button>
+          <button class="pill-tab" id="tab-btn-models" onclick="switchSubPill('models')">Model Lab</button>
+        </div>
+
+        <div class="ai-search-pill">
+          <span class="ai-icon">🎙️</span>
+          <input type="text" id="aiQueryInput" class="ai-input" placeholder="Ask examguard.ai anything..." onkeydown="handleAIQuery(event)">
+        </div>
+      </section>
+
+      <!-- Middle Grid: Cards 1, 2, 3, 4 -->
+      <section class="dashboard-grid">
+
+        <!-- Column 1: Stack of Card 1 & Card 2 -->
+        <div class="left-stack">
+          <!-- Card 1: Total Holding / Candidates -->
+          <div class="glass-card">
+            <div class="card-stat-header">
+              <span class="stat-label">Total Candidates</span>
+              <div class="dropdown-pill" onclick="cycleVideoInput()">
+                <span id="currentVideoBadge">class_1.mp4</span>
+                <span>⌵</span>
+              </div>
+            </div>
+            <div class="stat-value" id="trackedCandidatesCount">20 Active</div>
+            <div class="stat-meta">
+              <span>●</span>
+              <span id="modelStatusSub">Fine-Tuned YOLOv8 Active</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Decisions Powered by Data -->
+          <div class="glass-card ai-decision-card">
+            <div>
+              <div class="decision-title">Decisions Powered by Data</div>
+              <div class="decision-desc">
+                Move beyond guesswork with AI-driven temporal monitoring tailored to exam integrity.
+              </div>
+            </div>
+            <button class="glowing-pill-btn" onclick="openVideoModal()">Explore AI Insights</button>
+          </div>
+        </div>
+
+        <!-- Column 2: Card 3 - Anomaly Watchlist -->
+        <div class="glass-card watchlist-card">
+          <div class="card-header-row">
+            <div class="card-title">Watchlist</div>
+            <div class="filter-mini-pills">
+              <button class="mini-pill active" onclick="filterWatchlist('all')">Most Viewed</button>
+              <button class="mini-pill" onclick="filterWatchlist('high')">High</button>
+              <button class="mini-pill" onclick="filterWatchlist('resolved')">Resolved</button>
+            </div>
+          </div>
+
+          <div class="watchlist-items" id="watchlistContainer">
+            <!-- Dynamically populated or default representative items -->
+            <div class="watch-item" onclick="openVideoModal(14)">
+              <div class="watch-item-left">
+                <div class="watch-icon-box">🔄</div>
+                <div>
+                  <div class="watch-item-title">Seat #16</div>
+                  <div class="watch-item-sub">Repeated Side Movement</div>
+                </div>
+              </div>
+              <div class="watch-item-right">
+                <div class="watch-price">00:14</div>
+                <div class="watch-gain watch-risk-high">+88% Risk</div>
+              </div>
+            </div>
+
+            <div class="watch-item" onclick="openVideoModal(9)">
+              <div class="watch-item-left">
+                <div class="watch-icon-box">📱</div>
+                <div>
+                  <div class="watch-item-title">Seat #05</div>
+                  <div class="watch-item-sub">Mobile Phone Presence</div>
+                </div>
+              </div>
+              <div class="watch-item-right">
+                <div class="watch-price">00:09</div>
+                <div class="watch-gain watch-risk-high">+80% Risk</div>
+              </div>
+            </div>
+
+            <div class="watch-item" onclick="openVideoModal(11)">
+              <div class="watch-item-left">
+                <div class="watch-icon-box">👀</div>
+                <div>
+                  <div class="watch-item-title">Seat #18</div>
+                  <div class="watch-item-sub">Repeated Head Turn</div>
+                </div>
+              </div>
+              <div class="watch-item-right">
+                <div class="watch-price">00:11</div>
+                <div class="watch-gain watch-risk-med">+76% Risk</div>
+              </div>
+            </div>
+
+            <div class="watch-item" onclick="openVideoModal(8)">
+              <div class="watch-item-left">
+                <div class="watch-icon-box">🚶</div>
+                <div>
+                  <div class="watch-item-title">Seat #03</div>
+                  <div class="watch-item-sub">Seat Departure</div>
+                </div>
+              </div>
+              <div class="watch-item-right">
+                <div class="watch-price">00:08</div>
+                <div class="watch-gain">+64% Risk</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Card 4 - My Portfolio (2x2 Seat Matrix) -->
+        <div class="glass-card portfolio-card">
+          <div class="card-header-row">
+            <div class="card-title">My Portfolio</div>
+            <div class="header-actions">
+              <button class="mini-pill" onclick="openVideoModal()">See all</button>
+              <div class="circle-arrow-btn" onclick="openVideoModal()">↗</div>
+            </div>
+          </div>
+
+          <div class="seats-mini-grid" id="seatsMiniGrid">
+            <!-- 4 Grid Tiles -->
+            <div class="mini-seat-card" onclick="openVideoModal(8)">
+              <div class="seat-value">Seat #01</div>
+              <div class="seat-change">+0.7% Normal</div>
+              <div class="seat-footer">
+                <span>Candidate #101</span>
+                <span>Normal</span>
+              </div>
+            </div>
+
+            <div class="mini-seat-card" onclick="openVideoModal(14)">
+              <div class="seat-value">Seat #16</div>
+              <div class="seat-change watch-risk-high">+88% Alert</div>
+              <div class="seat-footer">
+                <span>Candidate #116</span>
+                <span>Review</span>
+              </div>
+            </div>
+
+            <div class="mini-seat-card" onclick="openVideoModal(9)">
+              <div class="seat-value">Seat #05</div>
+              <div class="seat-change watch-risk-high">+80% Alert</div>
+              <div class="seat-footer">
+                <span>Candidate #105</span>
+                <span>Phone</span>
+              </div>
+            </div>
+
+            <div class="mini-seat-card" onclick="openVideoModal(11)">
+              <div class="seat-value">Seat #18</div>
+              <div class="seat-change watch-risk-med">+76% Obs</div>
+              <div class="seat-footer">
+                <span>Candidate #118</span>
+                <span>Side Look</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Bottom Card: Temporal Risk Dynamics (Chart matching mockup) -->
+      <section class="glass-card performance-card">
+        <div class="card-header-row">
+          <div class="card-title">Portfolio Performance</div>
+          <div class="time-range-pills">
+            <button class="mini-pill" onclick="changeChartSpan('10s')">1D</button>
+            <button class="mini-pill" onclick="changeChartSpan('30s')">1W</button>
+            <button class="mini-pill" onclick="changeChartSpan('1m')">1M</button>
+            <button class="mini-pill" onclick="changeChartSpan('5m')">6M</button>
+            <button class="mini-pill active" onclick="changeChartSpan('all')">1Y</button>
+          </div>
+        </div>
+
+        <div class="chart-wrapper">
+          <!-- Floating Highlight Badge matching the mockup's "1st Jun 2025 | $16,500 | +35%" -->
+          <div class="chart-highlight-badge" id="chartHoverBadge">
+            <div class="badge-top-row">
+              <span id="badgeDate">1st Jun 2025</span>
+              <span>•••</span>
+            </div>
+            <div class="badge-bottom-row">
+              <span class="badge-val" id="badgeVal">$ 16,500</span>
+              <span class="badge-tag" id="badgeTag">+35%</span>
+            </div>
+          </div>
+
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- 3. LIVE VIDEO PLAYER & CANVAS HUD MODAL (Zero-Lag Inspection) -->
+  <div class="modal-overlay" id="videoModal">
+    <div class="video-modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📹</span>
+          <span>Live Examination Video Stream & Temporal Anomaly HUD</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeVideoModal()">✕</button>
+      </div>
+
+      <!-- Video & Canvas Viewport -->
+      <div class="video-viewport" id="videoViewport">
+        <video id="examVideo" class="video-element" playsinline preload="auto"></video>
+        <canvas id="overlayCanvas" class="overlay-canvas"></canvas>
+      </div>
+
+      <!-- Scrubber & Controls -->
+      <div class="player-controls">
+        <div class="control-buttons">
+          <button class="btn-pill-small" id="playPauseBtn" onclick="togglePlayPause()">▶ Play</button>
+          <button class="btn-pill-small" onclick="stepVideo(-1.0)">⏮ -1s</button>
+          <button class="btn-pill-small" onclick="stepVideo(1.0)">⏭ +1s</button>
+          <button class="btn-pill-small" onclick="resetVideo()">↺ 0s</button>
+        </div>
+
+        <input type="range" id="timeScrubber" class="scrubber-bar" min="0" max="20" step="0.1" value="0" oninput="onScrubInput(this.value)">
+
+        <div class="control-buttons">
+          <span id="currentTimeDisplay" style="font-size: 13px; color: #d8b4fe; font-weight: 600;">00:00 / 00:20</span>
+          
+          <select id="videoSelectDropdown" class="btn-pill-small" onchange="onVideoSelectChange(this.value)">
+            <!-- Populated via API -->
+          </select>
+
+          <button class="btn-pill-small" onclick="downloadCSVReport()">📄 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Real-time HUD Indicators -->
+      <div style="display: flex; gap: 14px; font-size: 12px; color: #8b889d; background: rgba(255,255,255,0.03); padding: 10px 16px; border-radius: 12px;">
+        <div>Active Model: <strong id="hudModelText" style="color:#c084fc;">Fine-Tuned YOLOv8</strong></div>
+        <div>ML Anomaly Detector: <strong id="hudMLText" style="color:#22c55e;">Enabled</strong></div>
+        <div>Tracked Students: <strong id="hudTrackedCount" style="color:#fff;">0</strong></div>
+        <div>Active Frame Risk: <strong id="hudRiskScore" style="color:#f472b6;">0/100</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SETTINGS & MODEL LAB MODAL -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="video-modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>⚙️</span>
+          <span>AI Engine Configuration & Model Lab</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeSettingsModal()">✕</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <label style="font-size:14px; font-weight:600;">Object Detection Weights:</label>
+        <select id="detectorModelSelect" class="btn-pill-small" style="padding:10px;">
+          <option value="fine_tuned">Fine-Tuned Exam YOLOv8 (models/yolov8n_exam.pt)</option>
+          <option value="base">Base Pretrained YOLOv8 (models/yolov8n.pt)</option>
+        </select>
+
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px; cursor:pointer;">
+          <input type="checkbox" id="mlAnomalyToggle" checked style="width:18px; height:18px; accent-color:#a855f7;">
+          <span>Enable ML Behavioral Anomaly Detector (Isolation Forest + Covariance)</span>
+        </label>
+
+        <button class="glowing-pill-btn" onclick="applyModelPreferences()">Save & Apply Preferences</button>
+
+        <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:8px 0;">
+
+        <div style="font-size:13px; color:#8b889d; line-height:1.5;">
+          <strong>Notice:</strong> This system is an examination-support prototype prioritizing human invigilator review. Scores and flagged alerts do not deliver automated verdicts of cheating.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

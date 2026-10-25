@@ -1,0 +1,24 @@
+{
+  "training_samples": 4470,
+  "features_dimension": 10,
+  "duration_seconds": 0.51,
+  "anomaly_score_quantiles": {
+    "q25": 0.7011,
+    "q50_median": 0.8312,
+    "q75": 1.0,
+    "q95": 1.0
+  },
+  "model_path": "models/behavior_anomaly_detector.joblib",
+  "feature_stats": {
+    "velocity": 13.448169708251953,
+    "accel": 29.000375747680664,
+    "disp_from_anchor": 26.033184051513672,
+    "disp_window_rate": 6.50620174407959,
+    "head_yaw_proxy": 0.018872259184718132,
+    "head_jitter_rate": 0.011989417485892773,
+    "bbox_aspect_ratio": 1.2117873430252075,
+    "bbox_area_change_rate": 0.03795639052987099,
+    "neighbor_min_dist": 97.86631774902344,
+    "neighbor_density_count": 2.4223713874816895
+  }
+}

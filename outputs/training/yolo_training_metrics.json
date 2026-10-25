@@ -1,0 +1,7 @@
+{
+  "epochs": 3,
+  "device": "mps",
+  "duration_seconds": 49.98,
+  "trained_weights_path": "models/yolov8n.pt",
+  "training_run_dir": "outputs/training/yolo_exam_run"
+}
